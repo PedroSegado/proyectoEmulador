@@ -1,0 +1,20 @@
+@font-face {
+    font-family: Delicious;
+    src: url('Digital7-rg1mL.ttf');
+} 
+
+.pantalla {
+     -fx-font-family: Digital-7;     
+     -fx-font-size: 29;
+     -fx-text-fill: #ffffff;  
+     -fx-background-color: #000000;
+     
+ }
+
+ .pantalla .content {
+     -fx-background-color: #000000;     
+ }
+ 
+ .pantalla .text {
+     -fx-line-spacing: 4px;
+}
