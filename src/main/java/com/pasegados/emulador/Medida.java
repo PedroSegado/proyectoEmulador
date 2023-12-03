@@ -1,4 +1,3 @@
-
 package com.pasegados.emulador;
 
 import java.util.Random;

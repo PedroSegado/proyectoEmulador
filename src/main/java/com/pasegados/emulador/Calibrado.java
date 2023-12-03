@@ -1,8 +1,8 @@
 package com.pasegados.emulador;
 
 /**
- *
- * @author paseg
+ * Esta clase se utiliza para crear calibrados de prueba (el emulador genera 3).
+ * @author Pedro A. Segado Solano
  */
 public class Calibrado {
     
@@ -28,6 +28,8 @@ public class Calibrado {
         this.termInd = termInd;
     }
 
+    // Getters y Setters
+    
     public String getNombre() {
         return nombre;
     }
@@ -99,7 +101,4 @@ public class Calibrado {
     public void setTermInd(double termInd) {
         this.termInd = termInd;
     }
-    
-    
-    
 }

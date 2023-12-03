@@ -1,4 +1,3 @@
-
 package com.pasegados.emulador;
 
 import com.fazecast.jSerialComm.SerialPort;
@@ -6,7 +5,7 @@ import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
 
 /**
- *
+ * Esta clase genera el puerto de comunicaciones con todos sus atributos y métodos para enviar y recibir datos
  * @author Pedro Antonio Segado Solano
  */
 public class Puerto {
@@ -32,6 +31,7 @@ public class Puerto {
     }
 
     //GETTERS Y SETTER
+    
     public static SerialPort[] getPuertosSistema() {
         return puertosSistema;
     }
