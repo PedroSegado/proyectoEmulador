@@ -27,16 +27,16 @@ public class Condicionamiento extends Thread {
         // Se realiza siempre.
         CONTROLADOR.menuCondicionando1();
         try {
-            sleep(2000);
+            sleep(1000);
         } catch (InterruptedException ex) {
         }
 
         // Segunda pantalla de acondicionamiento donde se hace la cuenta atras de los segundos pasados
         // a la variable "valor". Se puede parar pulsando ESC.
-        for (int i = VALOR; i >= 0 & acondicionando; i--) {            
+        for (int i = VALOR; i >= 1 & acondicionando; i--) {              
             CONTROLADOR.menuCondicionando2(i);
             try {
-                sleep(1000); //Actualiza el menuCondicionamiento() cada segundo
+                if (i!=1) sleep(1000); //Actualiza el menuCondicionamiento() cada segundo
             } catch (InterruptedException ex) {}   
         }
         

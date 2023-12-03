@@ -14,20 +14,20 @@ public class Medida extends Thread {
 
     private final VistaController CONTROLADOR = Main.getControlador(); //Acceso al controlador de la vista
     private final String IDENTIFICACION; // Identificación de la muestra a analizare
-    private final String CALIBRADO; // Calibrado por el que se analiza la muestra
+    private final Calibrado CALIBRADO; // Calibrado por el que se analiza la muestra
     private final int DURACION; // Duración en segundos del ensayo en ese calibrado
     private boolean midiendo; // Para detener la medición si pasa a "false" al cancelar el análisis el usuario
     private int cps; // Cuentas por segundo detectadas por el equipo
-    private float resultado; // Concentración de azufre correspondiente a las cps detectadas, en función de la
+    private double resultado; // Concentración de azufre correspondiente a las cps detectadas, en función de la
                              // ecuación del calibrado
 
-    public Medida(String identificacion, String calibrado, int duracion) {
+    public Medida(String identificacion, Calibrado calibrado) {
         this.IDENTIFICACION = identificacion;
         this.CALIBRADO = calibrado;
-        this.DURACION = duracion;
+        this.DURACION = calibrado.getDuración();
         this.midiendo = true;
         this.cps = 0;
-        this.resultado = 0f;
+        this.resultado = 0;
     }
 
     @Override
@@ -36,13 +36,13 @@ public class Medida extends Thread {
         Random cuentas = new Random(); // Para crear un aleatorio de cuentas, dentro del rango del calibrado correspondiente
         cps=0;
         
-        if (CALIBRADO.equals("AZUFRE BAJO")) {
+        if (CALIBRADO.getNombre().equals("AZUFRE BAJO")) {
             cps = 2800 + cuentas.nextInt(1100);  //rango 2800 - 3900
         }
-        else if (CALIBRADO.equals("AZUFRE MEDIO")) {
+        else if (CALIBRADO.getNombre().equals("AZUFRE MEDIO")) {
             cps = 4370 + cuentas.nextInt(10410);  //rango 4370 - 14780
         }
-        else if (CALIBRADO.equals("AZUFRE ALTO")) {
+        else if (CALIBRADO.getNombre().equals("AZUFRE ALTO")) {
             cps = 10740 + cuentas.nextInt(23700);  //rango 10740 - 34440
         }
                 
@@ -51,23 +51,14 @@ public class Medida extends Thread {
         
         for (int i = DURACION; i >= 0 & midiendo; i--) { //mientras no llegue a 0 segundos y midiendo sea true
             cps = (cps - 10) + cuentas.nextInt(20);            
-                        
-            //Usamos la ecuacion almacenada en el equipo para calcular la concentración correspondiente a esas cuentas
-            if (CALIBRADO.equals("AZUFRE BAJO")) { //ecuación lineal azufre bajo 
-                resultado = (0.000085812200524f * cps) - 0.2316941753f;  //ecuación bajo          
-            }
-            else if (CALIBRADO.equals("AZUFRE MEDIO")) { //ecuación polinómica azufre medio             
-                resultado = (0.0000000005832865211765f * (float)Math.pow((double)cps, 2)) + (0.000075021149552202f * cps) - 0.236976f;                 
-            }
-            else if (CALIBRADO.equals("AZUFRE ALTO")) { //ecuación polinómica azufre alto  
-                resultado = (0.00000000214322618239f * (float)Math.pow((double)cps, 2)) + (0.000071686700045f * cps) -0.0095443f;            
-            }
             
+            resultado = (CALIBRADO.getCoefCuad() * (float)Math.pow((double)cps, 2)) + (CALIBRADO.getCoefLin() * cps) + CALIBRADO.getTermInd();            
+                        
             //Redondeamos resultado a 4 decimales            
             resultado = Math.round(resultado * 10000.0f) / 10000.0f;
             
             //Mostramos en pantalla del OXFORD el resultado momentaneo
-            CONTROLADOR.menuMidiendo(IDENTIFICACION, resultado, CALIBRADO, i);
+            CONTROLADOR.menuMidiendo(IDENTIFICACION, resultado, CALIBRADO.getNombre(), i);
             try {
                 sleep(1000); //Actualizamos cada segundo el valor de la medida en pantalla
             } catch (InterruptedException ex) {}                
@@ -85,7 +76,7 @@ public class Medida extends Thread {
             CONTROLADOR.getTextAreaDatos().appendText("Enviadas cuentas: " + cps +  "\n");
             
             //Cambiamos a pantalla de resultado en el equipo
-            CONTROLADOR.menuResultado(resultado, CALIBRADO);
+            CONTROLADOR.menuResultado(resultado, CALIBRADO.getNombre());
         }
     }
         

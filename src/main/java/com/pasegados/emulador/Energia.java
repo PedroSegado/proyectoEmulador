@@ -25,7 +25,7 @@ public class Energia extends Thread {
         //Primera pantalla de ajuste de energia durante 3 segundos
         CONTROLADOR.menuAjusteEnergia1();
         try {
-            sleep(2000);
+            sleep(1000);
         } catch (InterruptedException ex) {
         }
 

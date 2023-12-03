@@ -52,7 +52,7 @@ public class VistaController implements Initializable {
     private static final SerialPort[] PORTS = Puerto.getPuertosSistema();
     private Puerto puerto;
     public int menu = 0; //posicion inicial del menú (máquina de estados)
-    private String calibrado; // Almacena el calibrado con el que se realiza el analisis
+    private Calibrado calibrado; // Almacena el calibrado con el que se realiza el analisis
     private String id; // Almacena el identificador de la muestra a analizar    
     private Medida medida; // Almacena el hilo de cuenta atras que controla la medida
     private Condicionamiento acondicionamiento; // Almacena el hilo de cuenta atras que controla el acondicionamiento
@@ -146,7 +146,7 @@ public class VistaController implements Initializable {
         taPantalla.clear();
         taPantalla.appendText("                    : MENU PRINCIPAL:" + "\n");        
         taPantalla.appendText("1=ANALISIS                       2=OTRAS FUNCIONES");  //1 nos lleva al menú 3      
-    }                                                                  //2 no estará implementado 
+    }                                                                                 //2 nos lleva al menu 15
     
     public void menuAnalisis1(){ //Menu 3: Elección de calibrado de analisis(1)
         menu=3;
@@ -222,22 +222,167 @@ public class VistaController implements Initializable {
     }                                                        //cuenta atras controlada por un hilo de la clase "Energia"
     
     
-    public void menuMidiendo(String identificacion, float medida, String calibrado, int segundo){ 
+    public void menuMidiendo(String identificacion, double medida, String calibrado, int segundo){ 
         menu=13;    //Menu 13: Medida por los segundos correspondientes al calibrado (100 o 200 normalmente)
         taPantalla.clear();
         String med = String.format("%.4f", medida); //Formateamos para mostrar siempre 4 decimales
-        taPantalla.appendText("Muestra: " + identificacion +   "                             S=" + med + "MASS%" + "\n");
+        taPantalla.appendText("Muestra: " + identificacion +   "                            S=" + med + "MASS%" + "\n");
         taPantalla.appendText(calibrado + "                         SEGUNDOS="+ segundo); 
     }                                    //cuenta atras controlada por un hilo de la clase "Medida"
                                          //ESCAPE nos devuelve al menú 8 (introducción de muestra en el equipo)
     
-    public void menuResultado(float medida, String calibrado){ //Menu 14: Muestra resultado del analisis
+    public void menuResultado(double medida, String calibrado){ //Menu 14: Muestra resultado del analisis
         menu=14;
         taPantalla.clear();
         String med = String.format("%.4f", medida); //Formateamos para mostrar siempre 4 decimales
         taPantalla.appendText(calibrado + "   S=" + med + "MASS%" + "\n");
         taPantalla.appendText("Tecle <ENTER> para continuar"); //ENTER nos devuelve al menú 6 (inicio de ensayo del mismo calibrado)
     } 
+    
+    
+    
+    // ------ ACCEDER AL CALIBRADO --------- //
+    public void menuPassword1(){ //Menu 15
+        menu=15;
+        taPantalla.clear();        
+        taPantalla.appendText(" Entre password del operador: ---------" + "\n");
+        taPantalla.appendText(" TECLE <ESCAPE> PARA SALIR"); // ENTER nos lleva al menú 16 y ESC al menú 2
+    }   
+    public void menuOtrasFunciones(){ //Menu 16
+        menu=16;
+        taPantalla.clear();        
+        taPantalla.appendText(" 1=ESPECTRO                  2=CALIBRACION" + "\n");
+        taPantalla.appendText("3=UTILITARIOS             4=MENU PRINCIPAL"); // 2 nos lleva al menú 17 y 4 nos lleva al menú 2
+    }    
+    
+    public void menuPassword2(){ //Menu 17
+        menu=17;
+        taPantalla.clear();        
+        taPantalla.appendText(" ENTRE PASSWORD DEL RESPONSABLE: ---------" + "\n");
+        taPantalla.appendText(" TECLE <ESCAPE> PARA SALIR"); // ENTER nos lleva al menú 18 y ESC al menú 2
+    }    
+    
+    public void menuCalibracion1(){ //Menu 18
+        menu=18;
+        taPantalla.clear();        
+        taPantalla.appendText(" 1=Nueva calibracion   2=Calibracion existe" + "\n");
+        taPantalla.appendText("        "); // 2 nos lleva al menú 19
+    }   
+    
+    public void menuCalibracion2(){ //Menu 19
+        menu=19;
+        taPantalla.clear();                
+        taPantalla.appendText(" 1=LZMET048                  2=AZUFRE BAJO" + "\n");
+        taPantalla.appendText("3=LISTAR NOMBRES             4=CAMBIAR PAGINA"); // 2 nos lleva al menú  y 4 al menú 20
+    }   
+    
+    public void menuCalibracion3(){ //Menu 20
+        menu=20;
+        taPantalla.clear();                
+        taPantalla.appendText(" 1=LZMET049                  2=AZUFRE MEDIO" + "\n");
+        taPantalla.appendText("3=LISTAR NOMBRES             4=CAMBIAR PAGINA"); // 2 nos lleva al menú   y 4 al menú 21
+    }   
+    
+    public void menuCalibracion4(){ //Menu 21
+        menu=21;
+        taPantalla.clear();                
+        taPantalla.appendText(" 1=LZMET050                  2=AZUFRE ALTO" + "\n");
+        taPantalla.appendText("3=LISTAR NOMBRES             4=CAMBIAR PAGINA"); // 2 nos lleva al menú   y 4 al menú 22
+    }   
+    
+    public void menuCalibracion5(){ //Menu 22  //REVISAR SI ES ASI
+        menu=22;
+        taPantalla.clear();                
+        taPantalla.appendText("Sin mas calibraciones" + "\n");
+        taPantalla.appendText("Tecle <ENTER> para continuar"); //Enter nos lleva al menú 16
+    }   
+    
+    public void menuModificarCalibracion1(){ //Menu 23
+        menu=23;
+        taPantalla.clear();                
+        taPantalla.appendText("1=REVISION     2=COPIA     3=LISTA     4=MANDAR" + "\n");
+        taPantalla.appendText("5=BORRAR           6=ANALIZAR            7=SALIR"); // 1 nos lleva al menú 24 y 7 al menú 16
+    }   
+    
+    public void menuModificarCalibracion2(){ //Menu 24
+        menu=24;
+        taPantalla.clear();                
+        taPantalla.appendText("Nombre de la calibración:" + "\n");
+        taPantalla.appendText(calibrado.getNombre()+"-".repeat(15-calibrado.getNombre().length())); // ENT nos lleva al menú 25
+    }  
+    
+    public void menuModificarCalibracion3(){ //Menu 25
+        menu=25;
+        taPantalla.clear();                
+        taPantalla.appendText(calibrado.getNombre()+":" + "\n");
+        taPantalla.appendText("1=CONDICIONES     2=SEGMENTOS     3=CONTINUAR"); // 3 nos lleva al menú 26
+    }  
+    
+    public void menuModificarCalibracion4(){ //Menu 26
+        menu=26;
+        taPantalla.clear();                
+        taPantalla.appendText("1=PATRONES                  2=REGRESION" + "\n");
+        taPantalla.appendText("3=CORRECCIONES            4=CONTINUAR"); // 2 nos lleva al menu 31
+    }                                                                   // 4 nos lleva al menu 27
+
+    public void menuModificarCalibracion5(){ //Menu 27
+        menu=27;
+        taPantalla.clear();                
+        taPantalla.appendText("1=ALTAS Y BAJAS SUS      2=REPETICIONES" + "\n");
+        taPantalla.appendText("3=RECALIBRACION            4=CONTINUAR"); // 4 nos lleva al menu 28
+    }   
+    
+    public void menuModificarCalibracion6(){ //Menu 28
+        menu=28;
+        taPantalla.clear();                
+        taPantalla.appendText("FORMA DE IMPRESION:" + "\n");
+        taPantalla.appendText("1=NORMAL   2=REDUCIDO  3=PERSONALIZADO"); // ENT, 1, 2 o 3 nos llevan al menu 29
+    }  
+    
+    public void menuModificarCalibracion7(){ //Menu 29
+        menu=29;
+        taPantalla.clear();                
+        taPantalla.appendText("1=FORMA RS232            2=OTROS" + "\n");
+        taPantalla.appendText("3=BORRAR PATRON       4=CONTINUAR"); // 4 nos lleva al menu 30
+    }                                                               
+    
+    public void menuModificarCalibracion8(){ //Menu 30
+        menu=30;
+        taPantalla.clear();                
+        taPantalla.appendText("¿ARCHIVAR CALIBRACION?:  <YES> <NO>" + "\n");  // YES nos lleva al menu 23        
+    }  
+    
+    public void menuModificarRegresion1(){ //Menu 31
+        menu=31;
+        taPantalla.clear();                
+        taPantalla.appendText("1=DIFERENCIAS     2=GRAF.1     3=GRAF.2" + "\n");
+        taPantalla.appendText("4=INTESIDADES     5=MANUAL     6=SALIR"); // 5 nos lleva al menu 32
+    }                                                                  // 6 nos lleva al menu 26
+    
+    public void menuModificarRegresion2(){ //Menu 32
+        menu=32;
+        taPantalla.clear();                
+        taPantalla.appendText("COEFICIENTES PARA S       (ORIGEN)"+"\n");
+        taPantalla.appendText("ENTRE A(0):" + calibrado.getTermInd() + "-".repeat(18 - (String.valueOf(calibrado.getTermInd())).length())); 
+    }   // Usuario enviara el dato para sustituir al actual o pulsara enter para seguir manteniendolo 
+    
+    public void menuModificarRegresion3(){ //Menu 33
+        menu=33;
+        taPantalla.clear();                
+        taPantalla.appendText("COEFICIENTES PARA S       (PENDIENTE)"+"\n");
+        taPantalla.appendText("ENTRE A(1):" + calibrado.getCoefLin() + "-".repeat(18 - (String.valueOf(calibrado.getCoefLin())).length())); 
+    }   // Usuario enviara el dato para sustituir al actual o pulsara enter para seguir manteniendolo 
+    
+    public void menuModificarRegresion4(){ //Menu 34
+        menu=34;
+        taPantalla.clear();                
+        taPantalla.appendText("COEFICIENTES PARA S       (EFECTO DE S)"+"\n");
+        taPantalla.appendText("ENTRE A(2):" + calibrado.getCoefCuad() + "-".repeat(18 - (String.valueOf(calibrado.getCoefCuad())).length())); 
+    }   // Usuario enviara el dato para sustituir al actual o pulsara enter para seguir manteniendolo 
+
+
+
+    
     
     public Puerto getPuerto(){
         return puerto;
@@ -294,6 +439,68 @@ public class VistaController implements Initializable {
                     case 14:
                         menuResultado(buffer);
                         break;
+                        
+                    case 15:
+                        menuPassword1(buffer);
+                        break;
+                    case 16:
+                        menuOtrasFunciones(buffer);
+                        break;
+                    case 17:
+                        menuPassword2(buffer);
+                        break;
+                    case 18:
+                        menuCalibracion1(buffer);
+                        break;
+                    case 19:
+                        menuCalibracion2(buffer);
+                        break;
+                    case 20:
+                        menuCalibracion3(buffer);
+                        break;
+                    case 21:
+                        menuCalibracion4(buffer);
+                        break;
+                    case 22:
+                        menuCalibracion5(buffer);
+                        break;
+                    case 23:
+                        menuModificarCalibracion1(buffer);
+                        break;
+                    case 24:
+                        menuModificarCalibracion2(buffer);
+                        break;
+                    case 25:
+                        menuModificarCalibracion3(buffer);
+                        break;
+                    case 26:
+                        menuModificarCalibracion4(buffer);
+                        break;
+                    case 27:
+                        menuModificarCalibracion5(buffer);
+                        break;
+                    case 28:
+                        menuModificarCalibracion6(buffer);
+                        break;
+                    case 29:
+                        menuModificarCalibracion7(buffer);
+                        break;
+                    case 30:
+                        menuModificarCalibracion8(buffer);
+                        break;
+                    case 31:
+                        menuModificarRegresion1(buffer);
+                        break;
+                    case 32:
+                        menuModificarRegresion2(buffer);
+                        break;
+                    case 33:
+                        menuModificarRegresion3(buffer);
+                        break;
+                    case 34:
+                        menuModificarRegresion4(buffer);
+                        break;
+                    
                }
     }
     
@@ -313,7 +520,7 @@ public class VistaController implements Initializable {
         }
         else if (array[0] == 50) {
             taDatos.appendText("Seleccionada opcion OTRAS FUNCIONES del menu" + "\n");
-            //No implementado, innecesario para el proyecto      
+            menuPassword1();
         }
     }
 
@@ -321,13 +528,13 @@ public class VistaController implements Initializable {
         switch (array[0]) {
             case 49:
                 taDatos.appendText("Seleccionada opcion AZUFRE BAJO del menu" + "\n");
-                menuEnsayo1("AZUFRE BAJO");
-                calibrado = "AZUFRE BAJO";
+                calibrado = Main.getCalibrado("AZUFRE BAJO");                
+                menuEnsayo1(calibrado.getNombre());    
                 break;
             case 50:
                 taDatos.appendText("Seleccionada opcion AZUFRE MEDIO del menu" + "\n");
-                menuEnsayo1("AZUFRE MEDIO");
-                calibrado = "AZUFRE MEDIO";
+                calibrado = Main.getCalibrado("AZUFRE MEDIO");                                
+                menuEnsayo1(calibrado.getNombre());    
                 break;
             case 51:
                 taDatos.appendText("Seleccionada opcion LISTAR NOMBRES del menu" + "\n");
@@ -336,15 +543,15 @@ public class VistaController implements Initializable {
             case 52:
                 taDatos.appendText("Seleccionada opcion CAMBIAR PAGINA del menu" + "\n");
                 menuAnalisis2();
-        }
+        }                    
     }
     
     public void menuAnalisis2(byte[] array) { //Menu 4              
         switch (array[0]) {
             case 49: // 1
-                taDatos.appendText("Seleccionada opcion AZUFRE ALTO del menu" + "\n");
-                menuEnsayo1("AZUFRE ALTO");
-                calibrado = "AZUFRE ALTO";
+                taDatos.appendText("Seleccionada opcion AZUFRE ALTO del menu" + "\n");                
+                calibrado = Main.getCalibrado("AZUFRE ALTO");                         
+                menuEnsayo1(calibrado.getNombre());
                 break;
             case 51: // 3 (no existe el 2 en esta pantalla)
                 taDatos.appendText("Seleccionada opcion LISTAR NOMBRES del menu" + "\n");
@@ -369,7 +576,7 @@ public class VistaController implements Initializable {
             case 49: // 1
                 taDatos.appendText("Seleccionada opcion MANUAL del menu" + "\n");
                 id = "";
-                menuEnsayo2(calibrado, id);
+                menuEnsayo2(calibrado.getNombre(), id);
                 break;
             case 50: // 2
                 taDatos.appendText("Seleccionada opcion CAMBIADOR del menu" + "\n");
@@ -393,7 +600,7 @@ public class VistaController implements Initializable {
             for (byte b : array) {
                 id = id + String.valueOf((char) b);
                 id = id.substring(0, id.length());
-                menuEnsayo2(calibrado, id);
+                menuEnsayo2(calibrado.getNombre(), id);
             }
         }
         //Confirmamos la id pulsando ENTER
@@ -412,7 +619,7 @@ public class VistaController implements Initializable {
         }  
         else if (array[0] == 110 || array[0] == 27) {  // NO o ESCAPE, volvemos al menúEnsayo1
             taDatos.appendText("Recibido NO" + "\n");
-            menuEnsayo1(calibrado);
+            menuEnsayo1(calibrado.getNombre());
         }
     }
         
@@ -424,7 +631,7 @@ public class VistaController implements Initializable {
     if (array[0] == 27) { //Si se pulsa ESCAPE durante la cuenta atrás del acondicionamiento
             acondicionamiento.setAcondicionando(false); //para detener el hilo que actualiza cada segundo
             taDatos.appendText("Recibido ESCAPE. Deteniendo el acondicionamiento" + "\n");
-            menuEnsayo3(calibrado);  //Volvemos al menu para insertar la muestra e iniciar su analisis          
+            menuEnsayo3(calibrado.getNombre());  //Volvemos al menu para insertar la muestra e iniciar su analisis          
         }  
     }
     
@@ -436,7 +643,7 @@ public class VistaController implements Initializable {
     if (array[0] == 27) { //Si se pulsa ESCAPE durante la cuenta atrás del ajuste de energia
             ajusteEnergia.setAjustando(false); //para detener el hilo que actualiza cada segundo
             taDatos.appendText("Recibido ESCAPE. Deteniendo el ajuste de energia" + "\n");
-            menuEnsayo3(calibrado);  //Volvemos al menu para insertar la muestra e iniciar su analisis          
+            menuEnsayo3(calibrado.getNombre());  //Volvemos al menu para insertar la muestra e iniciar su analisis          
         }  
     }    
     
@@ -444,16 +651,232 @@ public class VistaController implements Initializable {
         if (array[0] == 27) { //Si se pulsa ESCAPE durante la medida
             medida.setMidiendo(false); //para detener el hilo que actualiza la medida cada segundo
             taDatos.appendText("Recibido ESCAPE. Deteniendo la medición" + "\n");
-            menuEnsayo3(calibrado);  //Volvemos al menu para insertar la muestra e iniciar su analisis          
+            menuEnsayo3(calibrado.getNombre());  //Volvemos al menu para insertar la muestra e iniciar su analisis          
         }        
     }   
        
     public void menuResultado(byte[] array) { //Menu 14
         if (array[0] == 0x0d) { //Si se pulsa ENTER en la pantalla de resultado, una vez terminado el análisis
             taDatos.appendText("Recibido ENTER. Volviendo al menu de ensayo" + "\n");
-            menuEnsayo1(calibrado);  //Volvemos al menu de ensayo de esa calibración          
+            menuEnsayo1(calibrado.getNombre());  //Volvemos al menu de ensayo de esa calibración          
         }        
     } 
+    
+    
+    // CALIBRADO
+    
+    public void menuPassword1(byte[] array) { //Menu 15
+        if (array[0] == 0x0d) { //Si se pulsa ENTER
+            taDatos.appendText("Recibido ENTER. Accediendo menu OTRAS FUNCIONES" + "\n");
+            menuOtrasFunciones();
+        }   
+        if (array[0] == 27) { //Si se pulsa ESCAPE 
+            menuPrincipal();
+        }
+    } 
+     
+    public void menuOtrasFunciones(byte[] array) { //Menu 16
+        if (array[0] == 50) { //2
+            taDatos.appendText("Recibido 2. Accediendo al petición PSW" + "\n");
+            menuPassword2();
+        }   
+        if (array[0] == 52) { //4
+            taDatos.appendText("Recibido 4. Volviendo al menú principal" + "\n");
+            menuPrincipal();
+        }
+    } 
+    
+    public void menuPassword2(byte[] array) { //Menu 17
+        if (array[0] == 0x0d) { //Si se pulsa ENTER
+            taDatos.appendText("Recibido ENTER. Accediendo menu Calibracion" + "\n");
+            menuCalibracion1();
+        }   
+        if (array[0] == 27) { //Si se pulsa ESCAPE 
+            menuOtrasFunciones();
+        }
+    } 
+    
+    public void menuCalibracion1(byte[] array) { //Menu 18
+        if (array[0] == 50) { //2
+            taDatos.appendText("Recibido 2. Accediendo al Calibracion existe" + "\n");
+            menuCalibracion2();
+        }  
+    } 
+    
+    public void menuCalibracion2(byte[] array) { //Menu 19
+        if (array[0] == 50) { //2
+            taDatos.appendText("Recibido 2. Accediendo a calibrado AZUFRE BAJO" + "\n");
+            calibrado = Main.getCalibrado("AZUFRE BAJO");
+            menuModificarCalibracion1();
+        }  
+        if (array[0] == 52) { //4
+            taDatos.appendText("Recibido 4. Cambiando a página 2 de calibrados" + "\n");
+            menuCalibracion3();
+        }  
+    } 
+    
+    public void menuCalibracion3(byte[] array) { //Menu 20
+        if (array[0] == 50) { //2
+            taDatos.appendText("Recibido 2. Accediendo a calibrado AZUFRE MEDIO" + "\n");
+            calibrado = Main.getCalibrado("AZUFRE MEDIO");
+            menuModificarCalibracion1();
+        }  
+        if (array[0] == 52) { //4
+            taDatos.appendText("Recibido 4. Cambiando a página 3 de calibrados" + "\n");
+            menuCalibracion4();
+        }  
+    } 
+    
+    public void menuCalibracion4(byte[] array) { //Menu 21
+        if (array[0] == 50) { //2
+            taDatos.appendText("Recibido 2. Accediendo a calibrado AZUFRE ALTO" + "\n");
+            calibrado = Main.getCalibrado("AZUFRE ALTO");
+            menuModificarCalibracion1();
+        }  
+        if (array[0] == 52) { //4
+            taDatos.appendText("Recibido 4. Cambiando a página 4 de calibrados" + "\n");
+            menuCalibracion5();
+        }  
+    } 
+    
+    public void menuCalibracion5(byte[] array) { //Menu 22
+        if (array[0] == 0x0d) { //Si se pulsa ENTER
+            taDatos.appendText("Recibido ENTER. Volviendo a menú OTRAS FUNCIONES" + "\n");
+            menuOtrasFunciones();
+        }          
+    } 
+    
+    
+    public void menuModificarCalibracion1(byte[] array) { //Menu 23
+        if (array[0] == 49) { //Si se pulsa 1
+            taDatos.appendText("Recibido 1. Accediendo al menú REVISION" + "\n");
+            menuModificarCalibracion2();
+        }          
+        if (array[0] == 55) { //Si se pulsa 7
+            taDatos.appendText("Recibido 7. Volviendo al menú OTRAS FUNCIONES" + "\n");
+            menuOtrasFunciones();
+        }          
+    } 
+    
+    public void menuModificarCalibracion2(byte[] array) { //Menu 24
+        if (array[0] == 0x0d) { //Si se pulsa ENTER
+            taDatos.appendText("Recibido ENT. Mantener nombre y acceder a config Calibrado" + "\n");
+            menuModificarCalibracion3();
+        }                         
+    } 
+    
+    public void menuModificarCalibracion3(byte[] array) { //Menu 25
+        if (array[0] == 51) { //Si se pulsa 3
+            taDatos.appendText("Recibido 3. Continuar ajustando Calibrado" + "\n");
+            menuModificarCalibracion4();
+        }                         
+    } 
+    
+    public void menuModificarCalibracion4(byte[] array) { //Menu 26
+        if (array[0] == 50) { //Si se pulsa 2
+            taDatos.appendText("Recibido 2. Accediendo a REGRESION" + "\n");
+            menuModificarRegresion1();
+        }                         
+        if (array[0] == 52) { //Si se pulsa 4
+            taDatos.appendText("Recibido 4. Continuar ajustando Calibrado" + "\n");
+            menuModificarCalibracion5();
+        }                         
+    } 
+    
+    public void menuModificarCalibracion5(byte[] array) { //Menu 27        
+        if (array[0] == 52) { //Si se pulsa 4
+            taDatos.appendText("Recibido 4. Continuar ajustando Calibrado" + "\n");
+            menuModificarCalibracion6();
+        }                         
+    } 
+    
+    public void menuModificarCalibracion6(byte[] array) { //Menu 28        
+        if (array[0] == 49 || array[0] == 50 || array[0] == 51 || array[0] == 0x0d) { //Si se pulsa 1, 2, 3 o ENT vamos a menú 29
+            taDatos.appendText("Ajustada Impresión. Continuar ajustando Calibrado" + "\n");
+            menuModificarCalibracion7();
+        }                         
+    } 
+    
+    public void menuModificarCalibracion7(byte[] array) { //Menu 29        
+        if (array[0] == 52) { //Si se 4 vamos a menú 30
+            taDatos.appendText("Ajustada Impresión. Continuar ajustando Calibrado" + "\n");
+            menuModificarCalibracion8();
+        }                         
+    } 
+    
+    public void menuModificarCalibracion8(byte[] array) { //Menu 30        
+        if (array[0] == 121) { //Si se pulsa YES vamos al menú 23
+            taDatos.appendText("Guardados cambios del calibrado. Volviendo a menu calibracion" + "\n");
+            menuModificarCalibracion1();
+        }                         
+    } 
+
+    public void menuModificarRegresion1(byte[] array) { //Menu 31        
+        if (array[0] == 53) { //Si se pulsa 5 vamos al menú 32
+            taDatos.appendText("Recibido 5: Accedemos a los coeficientes" + "\n");
+            menuModificarRegresion2();
+        }                         
+        if (array[0] == 54) { //Si se pulsa 6 vamos al menú 26
+            taDatos.appendText("Recibido 6: Volvemos al menu anterior" + "\n");
+            menuModificarCalibracion4();
+        }                         
+    }
+    
+    // ENT mantiene el coef. O se recibe nuevo coef. lineal + ENT, sustituyendo al anterior. 
+    public void menuModificarRegresion2(byte[] array) { //Menu 32                
+        String nuevoCoef = "";        
+        if (array[0] == 0x0d) { //Si se pulsa ENT vamos al menú 33
+            taDatos.appendText("Recibido ENT: cambiamos a coef lineal" + "\n");
+            menuModificarRegresion3();
+        }                         
+        else{
+            for (byte b:array){
+                nuevoCoef += (char)b;
+            }
+            calibrado.setTermInd(Double.valueOf(nuevoCoef)); // Actualizamos el coeficiente en nuestro objeto calibrado            
+            menuModificarRegresion2(); //Actualizamos la pantalla del equipo con el nuevo valor del coeficiente
+        }
+    }
+    
+    // ENT mantiene el coef. O se recibe nuevo coef. lineal + ENT, sustituyendo al anterior. 
+    public void menuModificarRegresion3(byte[] array) { //Menu 33                
+        String nuevoCoef = "";        
+        if (array[0] == 0x0d) { //Si se pulsa ENT vamos al menú 34
+            taDatos.appendText("Recibido ENT: cambiamos a coef cuadratico" + "\n");
+            menuModificarRegresion4();
+        }                         
+        else{
+            for (byte b:array){
+                nuevoCoef += (char)b;
+            }
+            calibrado.setCoefLin(Double.valueOf(nuevoCoef)); // Actualizamos el coeficiente en nuestro objeto calibrado            
+            menuModificarRegresion3(); //Actualizamos la pantalla del equipo con el nuevo valor del coeficiente
+        }
+    }
+    
+    // ENT mantiene el coef. O se recibe nuevo coef. lineal + ENT, sustituyendo al anterior. 
+    public void menuModificarRegresion4(byte[] array) { //Menu 34                
+        String nuevoCoef = "";        
+        if (array[0] == 0x0d) { //Si se pulsa ENT vamos al menú 31
+            taDatos.appendText("Recibido ENT: volvemos al menú anterior" + "\n");
+            menuModificarRegresion1();
+        }                         
+        else{
+            for (byte b:array){
+                nuevoCoef += (char)b;
+            }
+            calibrado.setCoefCuad(Double.valueOf(nuevoCoef)); // Actualizamos el coeficiente en nuestro objeto calibrado            
+            menuModificarRegresion4(); //Actualizamos la pantalla del equipo con el nuevo valor del coeficiente
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
         
     public void iniciaAcondicionamiento(){
         acondicionamiento = new Condicionamiento(10);
@@ -466,7 +889,7 @@ public class VistaController implements Initializable {
     }
     
     public void iniciaMedida(){
-        medida = new Medida(id, calibrado, 10); //10 segundos para pruebas
+        medida = new Medida(id, calibrado); //10 segundos para pruebas
         medida.start();
     }    
 }

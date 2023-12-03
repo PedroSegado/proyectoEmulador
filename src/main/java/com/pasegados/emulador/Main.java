@@ -2,6 +2,7 @@
 package com.pasegados.emulador;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import javafx.application.Application;
 import static javafx.application.Application.launch;
 import javafx.fxml.FXMLLoader;
@@ -19,6 +20,7 @@ import javafx.stage.Stage;
 public class Main extends Application {
     
     private static VistaController controlador; // Acceso al controlador de la vista
+    private static ArrayList<Calibrado> listaCal = new ArrayList();
 
     /**
      * @param args the command line arguments
@@ -34,6 +36,15 @@ public class Main extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
+       
+       // Creo los tres calibrados de prueba, coincidentes con los que crea la BBDD de prueba de la aplicacion
+       Calibrado bajo = new Calibrado("AZUFRE BAJO", 20, 1, 1, 1, 1, 0, 0.000085812200524, -0.2316941753);
+       listaCal.add(bajo);
+       Calibrado medio = new Calibrado("AZUFRE MEDIO", 20, 1, 2, 1, 2, 0.0000000005832865211765, 0.000075021149552202, -0.236976);
+       listaCal.add(medio);
+       Calibrado alto = new Calibrado("AZUFRE ALTO", 20, 2, 1, 2, 1, 0.00000000214322618239, 0.000071686700045, -0.0095443);
+       listaCal.add(alto);
+       
         
         FXMLLoader loader = new FXMLLoader();
 
@@ -58,4 +69,18 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.show();
     }    
+
+    public static ArrayList<Calibrado> getListaCal() {
+        return listaCal;
+    }
+    
+    public static Calibrado getCalibrado(String nombre) {
+        Calibrado cal = null;
+        for (Calibrado c : listaCal){
+            if (c.getNombre().equals(nombre)) cal = c;
+        }
+        return cal;
+    }
+    
+    
 }
