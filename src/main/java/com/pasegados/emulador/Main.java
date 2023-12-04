@@ -38,9 +38,9 @@ public class Main extends Application {
         // Creo los tres calibrados de prueba, coincidentes con los que crea la BBDD de prueba de la aplicacion
         Calibrado bajo = new Calibrado("AZUFRE BAJO", 20, 1, 1, 1, 1, 0, 0.000085812200524, -0.2316941753);
         listaCal.add(bajo);
-        Calibrado medio = new Calibrado("AZUFRE MEDIO", 20, 1, 2, 1, 2, 0.0000000005832865211765, 0.000075021149552202, -0.236976);
+        Calibrado medio = new Calibrado("AZUFRE MEDIO", 15, 1, 2, 1, 2, 0.0000000005832865211765, 0.000075021149552202, -0.236976);
         listaCal.add(medio);
-        Calibrado alto = new Calibrado("AZUFRE ALTO", 20, 2, 1, 2, 1, 0.00000000214322618239, 0.000071686700045, -0.0095443);
+        Calibrado alto = new Calibrado("AZUFRE ALTO", 10, 2, 1, 2, 1, 0.00000000214322618239, 0.000071686700045, -0.0095443);
         listaCal.add(alto);
 
         FXMLLoader loader = new FXMLLoader();
